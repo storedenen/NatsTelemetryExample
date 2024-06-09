@@ -39,7 +39,7 @@ services:
       - MqttClientConnectionString=HostName=nats;Port=1884;UserName=mqtt;Password=pass;UseTls=False;Protocol=v311;NumberOfClientPartitions=1
       - PublishedNodesFile=/appdata/publisher.json
       - AutoAcceptUntrustedCertificates=True
-      - MessagingMode=PubSub
+      - MessagingMode=FullNetworkMessages
       - MessageEncoding=Json
       - TelemetryTopicTemplate={RootTopic}
       - DefaultTransport=Mqtt

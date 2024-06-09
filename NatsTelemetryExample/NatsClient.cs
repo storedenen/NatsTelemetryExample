@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using NatsTelemetryExample.PubSub;
 
 namespace NatsTelemetryExample
 {
@@ -16,7 +17,7 @@ namespace NatsTelemetryExample
         private readonly NatsOpts _natsOptions;
         private readonly string? _publisherSubject;
         private NatsConnection _natsConnection;
-        private INatsSub<object> _publisherSubscription;
+        private INatsSub<PubSubMessageRoot> _publisherSubscription;
 
         public NatsClient(ILogger<NatsClient> logger, IConfiguration configuration)
         {
@@ -49,8 +50,11 @@ namespace NatsTelemetryExample
                 {
                     await foreach (var msg in _publisherSubscription.Msgs.ReadAllAsync(stoppingToken))
                     {
-                        var order = msg.Data;
-                        _logger.LogInformation("Subscriber received {Subject}: {Order}", msg.Subject, order);
+                        if (msg.Data is PubSubMessageRoot pubSub)
+                        {
+                            _logger.LogInformation("Subscriber received {Subject}: {MessageId}/{PublisherId}", msg.Subject, pubSub.MessageId, pubSub.PublisherId);
+                        }
+                        
                     }
                 }
                 catch (Exception exception)
@@ -65,7 +69,7 @@ namespace NatsTelemetryExample
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _natsConnection = new NatsConnection(_natsOptions);
-            _publisherSubscription = await _natsConnection.SubscribeCoreAsync<Object>(_publisherSubject);
+            _publisherSubscription = await _natsConnection.SubscribeCoreAsync<PubSubMessageRoot>(_publisherSubject);
             await base.StartAsync(cancellationToken);
         }
 
