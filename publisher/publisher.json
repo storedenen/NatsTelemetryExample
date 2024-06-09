@@ -24,6 +24,14 @@
         "DisplayName": "SpikeData",
         "HeartbeatInterval": 5,
         "DataChangeFilter": 0
+      },
+      {
+        "Id": "nsu=http://microsoft.com/Opc/OpcPlc/Boiler;i=6211",
+        "OpcSamplingInterval": 500,
+        "OpcPublishingInterval": 1000,
+        "DisplayName": "Boiler",
+        "HeartbeatInterval": 5,
+        "DataChangeFilter": 0
       }
     ],
     "DataSetWriterId": "set1",
