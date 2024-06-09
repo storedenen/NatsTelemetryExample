@@ -6,7 +6,7 @@ namespace NatsTelemetryExample.PubSub
     {
         public string Id { get; set; }
         public object Value { get; set; }
-        public DateTime SourceTimestamp { get; set; }
-        public DateTime ServerTimestamp { get; set; }
+        public DateTimeOffset SourceTimestamp { get; set; }
+        public DateTimeOffset ServerTimestamp { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace NatsTelemetryExample
         private readonly NatsOpts _natsOptions;
         private readonly string? _publisherSubject;
         private readonly ConnectionMultiplexer _redisConnection;
+        private readonly string? _queueGroup;
         private NatsConnection _natsConnection;
         private INatsSub<PubSubMessageRoot> _publisherSubscription;
 
@@ -31,6 +32,7 @@ namespace NatsTelemetryExample
             _publisherSubject = configuration.GetValue("NATS_PUBLISHER_SUBJECT", "publisher");
             var url = configuration.GetValue("NATS_URL", "127.0.0.1:4222");
             var clientName = configuration.GetValue("NATS_CLIENT_NAME", "NATS-Client1");
+            _queueGroup = configuration.GetValue("NATS_QUEUE_GROUP", "NATSGroup");
             var password = configuration.GetValue("NATS_PASSWORD", "pass");
             var username = configuration.GetValue("NATS_PASSWORD", "user");
 
@@ -68,11 +70,21 @@ namespace NatsTelemetryExample
                             {
                                 foreach (var pubSubPayloadValue in pubSubMessage.Payload.PayloadValues)
                                 {
-                                    redisDb.SortedSetAdd(
+                                    var added = await redisDb.SortedSetAddAsync(
                                         new RedisKey(pubSubPayloadValue.Id), 
                                         new RedisValue(JsonSerializer.Serialize(pubSubPayloadValue)),
-                                        pubSubPayloadValue.SourceTimestamp.Ticks,
+                                        DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                         When.NotExists);
+
+                                    if (!added)
+                                    {
+                                        _logger.LogWarning("Record not added!");
+                                        await redisDb.SortedSetAddAsync($"Error",
+                                            new RedisValue(
+                                                $"NOT ADDED: {JsonSerializer.Serialize(pubSubPayloadValue)}"),
+                                            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                                    }
+                                    
                                     _logger.LogInformation("{Id} at {Time} = {Value} ", pubSubPayloadValue.Id, pubSubPayloadValue.SourceTimestamp, pubSubPayloadValue.Value);
                                 }
                             }
@@ -90,7 +102,7 @@ namespace NatsTelemetryExample
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _natsConnection = new NatsConnection(_natsOptions);
-            _publisherSubscription = await _natsConnection.SubscribeCoreAsync<PubSubMessageRoot>(_publisherSubject);
+            _publisherSubscription = await _natsConnection.SubscribeCoreAsync<PubSubMessageRoot>(_publisherSubject, _queueGroup);
             await base.StartAsync(cancellationToken);
         }
 

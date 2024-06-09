@@ -5,33 +5,25 @@
         "Id": "http://microsoft.com/Opc/OpcPlc/#s=NegativeTrendData",
         "OpcSamplingInterval": 500,
         "OpcPublishingInterval": 1000,
-        "DisplayName": "NegativeTrendData",
-        "HeartbeatInterval": 5,
-        "DataChangeFilter": 0
+        "DisplayName": "NegativeTrendData"
       },
       {
         "Id": "http://microsoft.com/Opc/OpcPlc/#s=AlternatingBoolean",
         "OpcSamplingInterval": 500,
         "OpcPublishingInterval": 1000,
-        "DisplayName": "AlternatingBoolean",
-        "HeartbeatInterval": 5,
-        "DataChangeFilter": 0
+        "DisplayName": "AlternatingBoolean"
       },
       {
         "Id": "nsu=http://microsoft.com/Opc/OpcPlc/;s=SpikeData",
         "OpcSamplingInterval": 500,
         "OpcPublishingInterval": 1000,
-        "DisplayName": "SpikeData",
-        "HeartbeatInterval": 5,
-        "DataChangeFilter": 0
+        "DisplayName": "SpikeData"
       },
       {
         "Id": "nsu=http://microsoft.com/Opc/OpcPlc/Boiler;i=6211",
         "OpcSamplingInterval": 500,
         "OpcPublishingInterval": 1000,
-        "DisplayName": "Boiler",
-        "HeartbeatInterval": 5,
-        "DataChangeFilter": 0
+        "DisplayName": "Boiler"
       }
     ],
     "DataSetWriterId": "set1",
