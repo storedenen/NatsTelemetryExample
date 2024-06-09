@@ -12,23 +12,14 @@ namespace NatsTelemetryExample
     {
         static void Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true)
-                .AddEnvironmentVariables()
-                .AddCommandLine(args)
-                .Build();
-            
-            var hostBuilder = new HostBuilder();
-            
-            hostBuilder.ConfigureServices(x =>
+            var hostBuilder = new HostApplicationBuilder();
+
+            hostBuilder.Services.AddLogging(x =>
             {
-                x.AddLogging(x =>
-                {
-                    x.AddConsole();
-                });
-                x.AddNats();
-                x.AddHostedService<NatsClient>();
+                x.AddConsole();
             });
+            hostBuilder.Services.AddNats();
+            hostBuilder.Services.AddHostedService<NatsClient>();
 
             var host = hostBuilder.Build();
         

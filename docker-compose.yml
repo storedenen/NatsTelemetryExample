@@ -1,15 +1,33 @@
 ﻿name: nats-publisher-example
 services:
   
-  natstelemetryexample:
+  natstelemetryexample1:
     image: natstelemetryexample
     depends_on:
       - nats
       - opcplc
       - opcpublisher
+      - redis
     build:
       context: .
       dockerfile: NatsTelemetryExample/Dockerfile
+    environment:
+      - NATS_URL=nats:4222
+      - REDIS_CONNECTION_STRING=redis:6379
+  
+  natstelemetryexample2:
+    image: natstelemetryexample
+    depends_on:
+      - nats
+      - opcplc
+      - opcpublisher
+      - redis
+    build:
+      context: .
+      dockerfile: NatsTelemetryExample/Dockerfile
+    environment:
+      - NATS_URL=nats:4222
+      - REDIS_CONNECTION_STRING=redis:6379
       
   nats:
     image: nats:2.9.25

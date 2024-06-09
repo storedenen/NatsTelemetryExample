@@ -19,8 +19,9 @@ namespace NatsTelemetryExample
         private readonly ILogger<NatsClient> _logger;
         private readonly NatsOpts _natsOptions;
         private readonly string? _publisherSubject;
-        private readonly ConnectionMultiplexer _redisConnection;
         private readonly string? _queueGroup;
+        private readonly string? _redisConnectionString;
+        private ConnectionMultiplexer _redisConnection;
         private NatsConnection _natsConnection;
         private INatsSub<PubSubMessageRoot> _publisherSubscription;
 
@@ -50,8 +51,10 @@ namespace NatsTelemetryExample
             };
             
             // REDIS configuration
-            var redisConnectionString = configuration.GetValue("REDIS_CONNECTION_STRING", "localhost:6379");
-            _redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+            _redisConnectionString = configuration.GetValue("REDIS_CONNECTION_STRING", "localhost:6379");
+            
+            _logger.LogInformation("Nats URL: {NatsUrl}", _natsOptions.Url);
+            _logger.LogInformation("Redis connection: {Redis}", _redisConnectionString);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -101,6 +104,7 @@ namespace NatsTelemetryExample
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            _redisConnection = ConnectionMultiplexer.Connect(_redisConnectionString);
             _natsConnection = new NatsConnection(_natsOptions);
             _publisherSubscription = await _natsConnection.SubscribeCoreAsync<PubSubMessageRoot>(_publisherSubject, _queueGroup);
             await base.StartAsync(cancellationToken);
