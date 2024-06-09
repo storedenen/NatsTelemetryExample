@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  natstelemetryexample:
+    build:
+      context: "/home/goblinus/dev/NatsTelemetryExample"
+      dockerfile: "NatsTelemetryExample/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/NatsTelemetryExample.dll"
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "natstelemetryexample:dev"
+    ports: []
+    volumes:
+    - "/home/goblinus/.nuget/packages:/home/app/.nuget/packages"
+    - "/home/goblinus/dev/NatsTelemetryExample/NatsTelemetryExample:/app:rw"
+    - "/home/goblinus/dev/NatsTelemetryExample:/src:rw"
+    working_dir: "/app"

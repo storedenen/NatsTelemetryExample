@@ -1,4 +1,5 @@
-﻿services:
+﻿name: nats-publisher-example
+services:
   
   natstelemetryexample:
     image: natstelemetryexample
@@ -16,10 +17,6 @@
     command: -c /etc/nats.conf --name nats -p 4222
     volumes:
       - ./nats/nats.conf:/etc/nats.conf
-      - ./nats/mqtt.conf:/etc/mqtt.conf
-      - ./nats/auth.conf:/etc/auth.conf
-      - ./nats/accounts.conf:/etc/accounts.conf
-      - ./nats/store_server:/store_server
     ports:
       - 7422:7422
       - 4222:4222
@@ -47,7 +44,7 @@
       - TelemetryTopicTemplate={RootTopic}
       - DefaultTransport=Mqtt
       - RootTopicTemplate=publisher
-      - MqttClientId=publisher232
+      - MqttClientId=publisher
       - BatchSize=1
       - BatchTriggerInterval=1
       - DefaultQualityOfService=AtLeastOnce
