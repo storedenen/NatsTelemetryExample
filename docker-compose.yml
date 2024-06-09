@@ -1,0 +1,66 @@
+﻿services:
+  
+  natstelemetryexample:
+    image: natstelemetryexample
+    depends_on:
+      - nats
+      - opcplc
+      - opcpublisher
+    build:
+      context: .
+      dockerfile: NatsTelemetryExample/Dockerfile
+      
+  nats:
+    image: nats:2.9.25
+    hostname: nats
+    command: -c /etc/nats.conf --name nats -p 4222
+    volumes:
+      - ./nats/nats.conf:/etc/nats.conf
+      - ./nats/mqtt.conf:/etc/mqtt.conf
+      - ./nats/auth.conf:/etc/auth.conf
+      - ./nats/accounts.conf:/etc/accounts.conf
+      - ./nats/store_server:/store_server
+    ports:
+      - 7422:7422
+      - 4222:4222
+      - 1884:1884
+    
+  opcplc:
+    image: mcr.microsoft.com/iotedge/opc-plc:2.12.12
+    hostname: opcplc
+    ports:
+      - 50000:50000
+    command: --sph --aa --unsecuretransport --fr=1 --sr=2 --ph=opcplc --to
+    
+  opcpublisher:
+    image: mcr.microsoft.com/iotedge/opc-publisher:2.9.6
+    command: -t=Mqtt
+    depends_on:
+      - nats
+      - opcplc
+    environment:
+      - MqttClientConnectionString=HostName=nats;Port=1884;UserName=mqtt;Password=pass;UseTls=False;Protocol=v311;NumberOfClientPartitions=1
+      - PublishedNodesFile=/appdata/publisher.json
+      - AutoAcceptUntrustedCertificates=True
+      - MessagingMode=PubSub
+      - MessageEncoding=Json
+      - TelemetryTopicTemplate={RootTopic}
+      - DefaultTransport=Mqtt
+      - RootTopicTemplate=publisher
+      - MqttClientId=publisher232
+      - BatchSize=1
+      - BatchTriggerInterval=1
+      - DefaultQualityOfService=AtLeastOnce
+      - MqttBrokerUserName=mqtt
+      - MqttBrokerPasswordKey=pass
+      - MqttBrokerHostName=cloud_1
+      - MqttBrokerPort=1884
+      #      - MqttBrokerUserName=
+      #      - MqttBrokerPasswordKey=
+      #      - MqttBrokerHostName=mosquitto
+      #      - MqttBrokerPort=1883
+      - MqttProtocolVersion=v311
+      - MqttBrokerUsesTls=False
+    volumes:
+      - ./publisher/publisher.json:/appdata/publisher.json  
+  

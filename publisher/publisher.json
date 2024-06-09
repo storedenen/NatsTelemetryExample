@@ -1,0 +1,27 @@
+[
+  {
+    "OpcNodes": [
+      {
+        "Id": "http://microsoft.com/Opc/OpcPlc/#s=NegativeTrendData",
+        "OpcSamplingInterval": 500,
+        "OpcPublishingInterval": 1000,
+        "DisplayName": "a2136d5b-1931-ee11-b8f0-00224883933b",
+        "HeartbeatInterval": 5,
+        "DataChangeFilter": 0
+      },
+      {
+        "Id": "http://microsoft.com/Opc/OpcPlc/#s=AlternatingBoolean",
+        "OpcSamplingInterval": 500,
+        "OpcPublishingInterval": 1000,
+        "DisplayName": "a4136d5b-1931-ee11-b8f0-00224883933b",
+        "HeartbeatInterval": 5,
+        "DataChangeFilter": 0
+      }
+    ],
+    "EndpointUrl": "opc.tcp://opcplc:50000/",
+    "UseSecurity": false,
+    "OpcAuthenticationMode": "Anonymous",
+    "OpcAuthenticationUsername": "",
+    "OpcAuthenticationPassword": ""
+  }
+]
