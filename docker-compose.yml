@@ -46,11 +46,6 @@ services:
     ports:
       - 6379:6379
       - 8001:8001
-        
-  grafana:
-    image: grafana/grafana-oss:11.0.0
-    ports:
-      - 3000:3000
     
   opcplc:
     image: mcr.microsoft.com/iotedge/opc-plc:2.12.12
