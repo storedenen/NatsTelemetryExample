@@ -26,6 +26,7 @@
       <PackageReference Include="NATS.Client.Serializers.Json" Version="2.2.2" />
       <PackageReference Include="NATS.Client.Services" Version="2.2.2" />
       <PackageReference Include="NATS.Net" Version="2.2.2" />
+      <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
     </ItemGroup>
 
 </Project>

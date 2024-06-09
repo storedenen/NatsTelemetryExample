@@ -1,8 +1,11 @@
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using NatsTelemetryExample.PubSub;
+using StackExchange.Redis;
 
 namespace NatsTelemetryExample
 {
@@ -16,12 +19,15 @@ namespace NatsTelemetryExample
         private readonly ILogger<NatsClient> _logger;
         private readonly NatsOpts _natsOptions;
         private readonly string? _publisherSubject;
+        private readonly ConnectionMultiplexer _redisConnection;
         private NatsConnection _natsConnection;
         private INatsSub<PubSubMessageRoot> _publisherSubscription;
 
         public NatsClient(ILogger<NatsClient> logger, IConfiguration configuration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            
+            // NATS Configuration
             _publisherSubject = configuration.GetValue("NATS_PUBLISHER_SUBJECT", "publisher");
             var url = configuration.GetValue("NATS_URL", "127.0.0.1:4222");
             var clientName = configuration.GetValue("NATS_CLIENT_NAME", "NATS-Client1");
@@ -40,10 +46,16 @@ namespace NatsTelemetryExample
                     Username = username,
                 }
             };
+            
+            // REDIS configuration
+            var redisConnectionString = configuration.GetValue("REDIS_CONNECTION_STRING", "localhost:6379");
+            _redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var redisDb = _redisConnection.GetDatabase();
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -56,6 +68,11 @@ namespace NatsTelemetryExample
                             {
                                 foreach (var pubSubPayloadValue in pubSubMessage.Payload.PayloadValues)
                                 {
+                                    redisDb.SortedSetAdd(
+                                        new RedisKey(pubSubPayloadValue.Id), 
+                                        new RedisValue(JsonSerializer.Serialize(pubSubPayloadValue)),
+                                        pubSubPayloadValue.SourceTimestamp.Ticks,
+                                        When.NotExists);
                                     _logger.LogInformation("{Id} at {Time} = {Value} ", pubSubPayloadValue.Id, pubSubPayloadValue.SourceTimestamp, pubSubPayloadValue.Value);
                                 }
                             }
@@ -81,6 +98,7 @@ namespace NatsTelemetryExample
         {
             await base.StopAsync(cancellationToken);
             await _publisherSubscription.DisposeAsync();
+            await _redisConnection.DisposeAsync();
             await _natsConnection.DisposeAsync();
         }
     }
