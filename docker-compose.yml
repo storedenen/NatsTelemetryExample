@@ -14,6 +14,7 @@ services:
     environment:
       - NATS_URL=nats:4222
       - REDIS_CONNECTION_STRING=redis:6379
+      - NATS_QUEUE_GROUP=group1
   
   natstelemetryexample2:
     image: natstelemetryexample
@@ -28,6 +29,7 @@ services:
     environment:
       - NATS_URL=nats:4222
       - REDIS_CONNECTION_STRING=redis:6379
+      - NATS_QUEUE_GROUP=group1
       
   nats:
     image: nats:2.9.25
