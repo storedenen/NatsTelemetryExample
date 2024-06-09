@@ -27,7 +27,7 @@ services:
     hostname: opcplc
     ports:
       - 50000:50000
-    command: --sph --aa --unsecuretransport --fr=1 --sr=2 --ph=opcplc --to
+    command: --sph --aa --unsecuretransport --fr=1 --sr=2 --ph=opcplc --to --ft=UInt --st=UInt 
     
   opcpublisher:
     image: mcr.microsoft.com/iotedge/opc-publisher:2.9.6

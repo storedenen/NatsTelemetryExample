@@ -52,7 +52,13 @@ namespace NatsTelemetryExample
                     {
                         if (msg.Data is PubSubMessageRoot pubSub)
                         {
-                            _logger.LogInformation("Subscriber received {Subject}: {MessageId}/{PublisherId}", msg.Subject, pubSub.MessageId, pubSub.PublisherId);
+                            foreach (var pubSubMessage in pubSub.Messages)
+                            {
+                                foreach (var pubSubPayloadValue in pubSubMessage.Payload.PayloadValues)
+                                {
+                                    _logger.LogInformation("{Id} at {Time} = {Value} ", pubSubPayloadValue.Id, pubSubPayloadValue.SourceTimestamp, pubSubPayloadValue.Value);
+                                }
+                            }
                         }
                         
                     }
@@ -62,8 +68,6 @@ namespace NatsTelemetryExample
                     _logger.LogError(exception, "An error occured");
                 }
             }
-            
-            _logger.LogInformation("Stopping...");
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)

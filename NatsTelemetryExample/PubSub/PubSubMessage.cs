@@ -7,6 +7,6 @@ namespace NatsTelemetryExample.PubSub
         public PubSubMetaDataVersion MetaDataVersion { get; set; }
         public string MessageType { get; set; }
         public DateTime Timestamp { get; set; }
-        public PubSubPayload[] Payloads { get; set; }
+        public PubSubPayload Payload { get; set; }
     }
 }

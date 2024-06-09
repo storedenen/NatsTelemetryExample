@@ -1,11 +1,12 @@
-using System;
+using System.Text.Json.Serialization;
 
 namespace NatsTelemetryExample.PubSub
 {
+    using System.Collections.Generic;
+
+    [JsonConverter(typeof(PubSubPayloadConverter))]
     public class PubSubPayload
     {
-        public object Value { get; set; }
-        public DateTime SourceTimestamp { get; set; }
-        public DateTime ServerTimestamp { get; set; }
+        public List<PubSubPayloadValue> PayloadValues { get; set; }
     }
 }
