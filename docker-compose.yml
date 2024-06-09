@@ -69,22 +69,10 @@ services:
       - MessagingMode=FullNetworkMessages
       - MessageEncoding=Json
       - TelemetryTopicTemplate={RootTopic}
-      - DefaultTransport=Mqtt
       - RootTopicTemplate=publisher
       - MqttClientId=publisher
       - BatchSize=1
       - BatchTriggerInterval=1
-      - DefaultQualityOfService=AtLeastOnce
-      - MqttBrokerUserName=mqtt
-      - MqttBrokerPasswordKey=pass
-      - MqttBrokerHostName=cloud_1
-      - MqttBrokerPort=1884
-      #      - MqttBrokerUserName=
-      #      - MqttBrokerPasswordKey=
-      #      - MqttBrokerHostName=mosquitto
-      #      - MqttBrokerPort=1883
-      - MqttProtocolVersion=v311
-      - MqttBrokerUsesTls=False
     volumes:
       - ./publisher/publisher.json:/appdata/publisher.json  
   
